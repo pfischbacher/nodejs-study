@@ -7,22 +7,24 @@ if (cluster.isMaster) {
   // in child mode
   cluster.fork();
   cluster.fork();
-  cluster.fork();
-  cluster.fork();
 } else {
   // I'm a child, I'm going to act like a server
   // and do nothing else
   const express = require('express');
   const app = express();
+  const https = require('https');
+  const crypto = require('crypto');
+  const start = Date.now();
+  const num = 100000;
 
-  function doWork(duration) {
-    const start = Date.now();
-    while (Date.now() - start < duration) {}
+  function doHash() {
   }
 
   app.get('/', (req, res) => {
-    doWork(5000);
-    res.send('Hi buddy');
+    crypto.pbkdf2('a', 'b', num, 512, 'sha512', () => {
+      //console.log('Hash:', Date.now() - start, 'milliseconds');
+      res.send('Hi buddy');
+    });
   });
   app.get('/fast', (req, res) => {
     res.send('This was fast!');
